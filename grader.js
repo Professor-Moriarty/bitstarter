@@ -21,10 +21,10 @@ References:
    - https://developer.mozilla.org/en-US/docs/JSON#JSON_in_Firefox_2
 */
 
-var fs = require('fs');
-var program = require('commander');
-var cheerio = require('cheerio');
-var HTMLFILE_DEFAULT = "index.html";
+var fs                 = require('fs');
+var program            = require('commander');
+var cheerio            = require('cheerio');
+var HTMLFILE_DEFAULT   = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 
 var assertFileExists = function(infile) {
@@ -67,7 +67,7 @@ if(require.main == module) {
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
         .parse(process.argv);
     var checkJson = checkHtmlFile(program.file, program.checks);
-    var outJson = JSON.stringify(checkJson, null, 4);
+    var outJson   = JSON.stringify(checkJson, null, 4);
     console.log(outJson);
 } else {
     exports.checkHtmlFile = checkHtmlFile;
