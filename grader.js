@@ -38,30 +38,19 @@ var assertFileExists = function(infile) {
 };
 
 var cheerioHtmlFile = function(htmlfile) {
-    if (program.file) return cheerio.load(fs.readFileSync(htmlfile));
-};
-
-var cheerioHtmlURL = function(htmlfile) {
-    if (program.url) return cheerio.load(getRestURL(htmlfile));
+    return cheerio.load(fs.readFileSync(htmlfile));
 };
 
 var loadChecks = function(checksfile) {
     return JSON.parse(fs.readFileSync(checksfile));
 };
 
-var checkHtmlFile = function(htmlfile, checksfile) {
-    $          = cheerioHtmlFile(htmlfile);
-    var checks = loadChecks(checksfile).sort();
-    var out    = {};
-    for(var ii in checks) {
-        var present = $(checks[ii]).length > 0;
-        out[checks[ii]] = present;
-    }
-    return out;
-};
-
-var checkHtmlURL = function(htmldata, checksfile) {
-    $          = cheerio.load(htmldata);
+var checkHtmlFile = function(htmlfile, checksfile, URLcontent) {
+	if (URLcontent) {
+		$ = cheerio.load(URLcontent);
+	} else {
+    	$ = cheerioHtmlFile(htmlfile);
+	}
     var checks = loadChecks(checksfile).sort();
     var out    = {};
     for(var ii in checks) {
@@ -85,7 +74,7 @@ if(require.main == module) {
         .parse(process.argv);
     if (program.url) {
             rest.get(program.url).on("complete", function(data, response) {
-                var checkJson = checkHtmlURL(data, program.checks);
+                var checkJson = checkHtmlFile(null, program.checks, data);
                 var outJson   = JSON.stringify(checkJson, null, 4);
                 console.log(outJson);
             }); 
@@ -94,8 +83,6 @@ if(require.main == module) {
         var outJson   = JSON.stringify(checkJson, null, 4);
         console.log(outJson);
     }
-
-
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
